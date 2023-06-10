@@ -1,8 +1,6 @@
 import {PrismaClient} from '@prisma/client';
 
 const prisma:any = new PrismaClient();
-
-
 const posts = [
   {
     category: "Tech",

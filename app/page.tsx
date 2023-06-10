@@ -1,16 +1,56 @@
-import React from "react";
-import { Trending, Tech, Travel } from "./(home)";
 import { Other, Sidebar, Subscribe } from "./(shared)";
+import { Tech, Travel, Trending } from "./(home)";
 
-const Home = () => {
+import { Post } from "@prisma/client";
+import React from "react";
+import { prisma } from "./api/client";
+export const revalidate = 60;
+const getPosts = async () => {
+  const posts = await prisma.post.findMany();
+  const formattedPosts = await Promise.all(
+    posts.map(async (post: Post) => {
+      const imageModule = require(`../public${post.image}`);
+      return {
+        ...post,
+        image: imageModule.default,
+      };
+    })
+  );
+  return formattedPosts;
+};
+const Home = async () => {
+  const posts = await getPosts();
+  const formatPost = () => {
+    const trendingPosts: Post[] = [];
+    const techPosts: Post[] = [];
+    const travelPosts: Post[] = [];
+    const otherPosts: Post[] = [];
+    posts.forEach((post: Post, i: number) => {
+      if (i < 4) {
+        trendingPosts.push(post);
+      }
+      if (post?.category === "Tech") {
+        techPosts.push(post);
+      }
+      if (post?.category === "Travel") {
+        travelPosts.push(post);
+      }
+      if (post?.category === "Interior Design") {
+        otherPosts.push(post);
+      }
+    });
+
+    return [trendingPosts, techPosts, travelPosts, otherPosts];
+  };
+  const [trendingPosts, techPosts, travelPosts, otherPosts] = formatPost();
   return (
     <main className="px-10 leading-7">
-      <Trending />
+      <Trending trendingPosts={trendingPosts} />
       <div className="md:flex gap-10 mb-5">
         <div className="basis-3/4">
-          <Tech />
-          <Travel />
-          <Other />
+          <Tech techPosts={techPosts} />
+          <Travel travelPosts={travelPosts} />
+          <Other otherPosts={otherPosts} />
           <div className="hidden md:block">
             <Subscribe />
           </div>

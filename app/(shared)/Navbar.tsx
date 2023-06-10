@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { SocialLinks } from "./";
+import Ad1 from '/public/assets/ad-1.jpg'
 type Props = {};
 const Navbar = (props: Props) => {
   return (
@@ -25,7 +26,7 @@ const Navbar = (props: Props) => {
           <p className="text-sm mt-3">Lorem ipsum</p>
         </div>
         <div className="basis-full relative w-auto h-32">
-          {/**<Image src=""/>*/}
+          <Image src={Ad1} fill alt="lorem" style={{objectFit: "cover"}}/>
         </div>
       </div>
       <hr className="border-1 mx-10" />
